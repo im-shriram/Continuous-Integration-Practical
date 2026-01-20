@@ -13,7 +13,7 @@ on:
 # The jobs field defines the set of jobs that will be run as part of the workflow. In this case, the workflow will run a linting job and a testing job. Jobs can run in parallel of sequentially (specified with the `needs` field).
 jobs:
   # This is a type of job
-  linting: 
+  linting:
     name: Linting # You can specify the name to the job.
     runs-on: ${{ matrix.os}} # This specifies the operating system that the job will run on. In this case, the job will run on Ubuntu-latest (recommended), Windows-latest, and macOS-latest.
 
@@ -31,33 +31,34 @@ jobs:
       - name: Set up Python # This step sets up the Python environment on the runner. In this case, it will install Python 3.8.
         uses: actions/setup-python@v2
         with: # To specify python version
-          python-version: '3.8'
+          python-version: "3.8"
 
       - name: Install dependencies
         run: | # | used to run multiple commands in a single step.
           python -m pip install --upgrade pip
-          pip install flake8 
+          pip install flake8
 
       - name: Run Flake8 linter
         run: flake8 app.py # Checks the linting errors in the app.py file.
 
-# `run` - used to run shell commands or scripts in the job.
-# `uses` - used to run pre-defined actions in the job.
+  # `run` - used to run shell commands or scripts in the job.
+  # `uses` - used to run pre-defined actions in the job.
 
   # The second job is a testing job that depends on the linting job.
   testing:
     name: Testing
-    needs: linting
+    needs: linting # Ensures the testing job only runs if the linting (specify more if needed) job succeeds.
     runs-on: ubuntu-latest
     steps:
       - name: code checkout
         uses: actions/checkout@v3
-      
+
       - name: setup python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
-      
+          python-version: "3.8"
+
       - name: run unit tests
-        run: | # This is the command to run the unit tests in the test_app.py file.
+        run:
+          | # This is the command to run the unit tests in the test_app.py file.
           python -m unittest discover
